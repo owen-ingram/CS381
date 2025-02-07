@@ -1,8 +1,16 @@
-1. A window can be made to be resizeable using raylib through the 
+1a. A window can be made to be resizeable using raylib through the 
 FLAG_WINDOW_RESIZEABLE flag. This will allow the window to be resized
 but does not automatically adjust the contents of the window.
-2. To keep text centered when resizing a window, use the Measure method
+
+1b. To keep text centered when resizing a window, use the Measure method
 to get the size of the text. Use the GetWidth and GetHeight methods to 
 get the size of the window and subtract the size of the text dividing it 
 all by 2 to get the center value. Use the Draw method with these values 
 to display the text at the center of the window no matter the size.
+
+2. To fetch Git submodules, `git submodule add https://github.com/owen-ingram/CS381.git` Then clone the dependencies for the submodule `git submodule init` and 
+`git submodule update --init --recursive`
+
+3. Inside the build folder, run `cmake ..` and `make` to compile the libraries. 
+
+4. To run the program, use the command, `./as0`. Not applicable for the controls.
