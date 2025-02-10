@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/as1.dir/src/as1.cpp.o CMakeFiles/as1.dir/src/implementations.cpp.o -o as1  raylib-cpp/raylib/raylib/libraylib.a -lm -lpthread /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
