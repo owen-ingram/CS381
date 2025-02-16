@@ -1,43 +1,53 @@
+#include <iostream>
 #include <raylib-cpp.hpp>
 #include "VolumeControl.h"
 
+extern Sound pingSound;
+
 int main() {
     raylib::Window window(800, 400, "CS381 - Assignment 1");
-    raylib::AudioDevice audioDevice;
-    audioDevice.Init();
-    GuiVolumeControlState volumeState = InitGuiVolumeControl();
-    raylib::Sound sfx("src/ping.wav");
-    raylib::Sound vocal("src/crowd.wav");
-    raylib::Music music("src/price-of-freedom.mp3");
+    window.SetState(FLAG_WINDOW_RESIZABLE);
 
-    vocal.Play();
-    music.Play();
+    InitAudioDevice();
+
+    pingSound = LoadSound("../src/ping.wav");
+    Music bgMusic = LoadMusicStream("../src/sunflower.mp3");
+    Music dialogue = LoadMusicStream("../src/crowd.wav");
+
+    PlayMusicStream(bgMusic);
+    PlayMusicStream(dialogue);
+
+    GuiVolumeControlState volumeState = InitGuiVolumeControl();
+
+    bool isDarkMode = true;
 
     while (!window.ShouldClose()) {
-        UpdateMusicStream(music);
-        sfx.SetVolume(volumeState.SFXSliderValue / 100.0f);
-        vocal.SetVolume(volumeState.DialogueSliderValue / 100.0f);
-        music.SetVolume(volumeState.MusicSliderValue / 100.0f);
+        UpdateMusicStream(bgMusic);
+        UpdateMusicStream(dialogue);
+        SetMusicVolume(bgMusic, volumeState.MusicSliderValue / 100.0f);
+        SetMusicVolume(dialogue, volumeState.DialogueSliderValue / 100.0f);
 
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+        window.BeginDrawing();
+
+        if (isDarkMode) {
+            window.ClearBackground(DARKGRAY);
+        } else {
+            window.ClearBackground(RAYWHITE);
+        }
+
+        if (GuiButton((Rectangle){ 100, 350, 100, 20 }, isDarkMode ? "Light" : "Dark")) {
+            isDarkMode = !isDarkMode;
+        }
+
         GuiVolumeControl(&volumeState);
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), {24, 304, 256, 24})) {
-            PingButton();
-        }
-        EndDrawing();
+        window.EndDrawing();
     }
 
-    sfx.Unload();
-    vocal.Unload();
-    music.Unload();
-    audioDevice.Close();
-    CloseWindow();
-    return 0;
-}
+    UnloadSound(pingSound);
+    UnloadMusicStream(bgMusic);
+    UnloadMusicStream(dialogue);
+    CloseAudioDevice();
 
-void PingButton() {
-    static raylib::Sound sfx("src/ping.wav");
-    sfx.Play();
+    return 0;
 }

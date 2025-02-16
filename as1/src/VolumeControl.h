@@ -30,6 +30,8 @@
 #ifndef GUI_VOLUMECONTROL_H
 #define GUI_VOLUMECONTROL_H
 
+extern void PingButton();
+
 typedef struct {
     // Define anchors
     Vector2 anchor01;            // ANCHOR ID:1
