@@ -8,13 +8,16 @@ concept Transformer = requires(T t, raylib::Matrix m) {
 };
 
 void DrawBoundedModel(raylib::Model& model, Transformer auto transformer) {
-    raylib::Matrix backup = model.transform;//backup the current state of the model
-    model.transform = transformer(backup);//use the transformer function to apply the transformations
-    model.Draw({});//draw the model with the transformations
-    model.transform = backup;//return the model to its original transformation
+    raylib::Matrix backup = model.transform;  // Backup the current model transform
+    model.transform = transformer(backup);    // Apply the transformation to the model
+    model.Draw({});                           // Draw the model
+
+    // Draw the bounding box based on the model's transformed state
     BoundingBox bounds = model.GetBoundingBox();
-    DrawBoundingBox(bounds, WHITE);
+    DrawBoundingBox(bounds, WHITE);  // Use a visible color for the bounding box
+    model.transform = backup;     // Restore the original transformation
 }
+
 
 int main() {
     raylib::Window window(800, 600, "CS381 - Assignment 2");
@@ -29,6 +32,10 @@ int main() {
     car.transform = MatrixScale(30, 30, 30);
 
     cs381::SkyBox sky("textures/skybox.png");
+
+    InitAudioDevice();
+    Music ambientMusic = LoadMusicStream("audio/sunflower.mp3");
+    PlayMusicStream(ambientMusic);
 
     while(!window.ShouldClose()) {
         window.BeginDrawing();
@@ -53,11 +60,15 @@ int main() {
                 });
                 
                 DrawBoundedModel(car, [](raylib::Matrix transform) -> raylib::Matrix {
-                    return MatrixMultiply(MatrixMultiply(MatrixMultiply(MatrixScale(30, 30, 30), MatrixTranslate(100, 100, 0)), MatrixScale(1, 2, 1)), MatrixRotateY(270));
+                    return MatrixMultiply(MatrixMultiply(MatrixMultiply(MatrixScale(30, 30, 30), MatrixTranslate(-100, -100, 0)), MatrixScale(1, 2, 1)), MatrixRotateY(270));
                 });
                 
 
             camera.EndMode();
         window.EndDrawing();
     }
+    UnloadMusicStream(ambientMusic);
+    CloseAudioDevice();
+
+    return 0;
 }
