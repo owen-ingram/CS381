@@ -8,10 +8,10 @@ concept Transformer = requires(T t, raylib::Matrix m) {
 };
 
 void DrawBoundedModel(raylib::Model& model, Transformer auto transformer) {
-    raylib::Matrix backup = model.transform;  // Backup the current model transform
-    model.transform = transformer(backup);    // Apply the transformation to the model
-    model.Draw({});                           // Draw the model
-    model.transform = backup;     // Restore the original transformation
+    raylib::Matrix backup = model.transform;
+    model.transform = transformer(backup);
+    model.Draw({});
+    model.transform = backup;
 }
 
 int main() {
@@ -19,7 +19,7 @@ int main() {
     window.SetState(FLAG_WINDOW_RESIZABLE);
 
     raylib::Model model("../assets/Kenny Car Kit/ambulance.glb");
-    model.transform = raylib::Matrix::Identity().Scale(5);
+    model.transform = raylib::Matrix::Identity().Scale(5).RotateY(raylib::Degree(90.0f));
 
     float targetSpeed = 0;
     float carHeading = 0, carSpeed = 0;
@@ -31,15 +31,23 @@ int main() {
 
     cs381::SkyBox sky("textures/skybox.png");
 
-    raylib::Camera3D camera(raylib::Vector3{ 0.0f, 10.0f, 30.0f }, raylib::Vector3{ 0.0f, 0.0f, 0.0f }, raylib::Vector3{ 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE);
+    raylib::Camera3D camera(
+        raylib::Vector3{ 0.0f, 10.0f, 30.0f },
+        carPosition,
+        raylib::Vector3{ 0.0f, 1.0f, 0.0f },
+        45.0f, CAMERA_PERSPECTIVE
+    );
 
-    while(!window.ShouldClose()) {
-
-
+    while (!window.ShouldClose()) {
         carSpeed = std::lerp(carSpeed, targetSpeed, window.GetFrameTime());
-    
-        raylib::Vector3 velocity = { cos(raylib::Degree(carHeading)) * carSpeed, 0, -sin(raylib::Degree(carHeading)) * carSpeed };
+
+        raylib::Vector3 velocity = {
+            cos(raylib::Degree(carHeading)) * carSpeed, 0,
+            -sin(raylib::Degree(carHeading)) * carSpeed
+        };
         carPosition = carPosition + velocity * window.GetFrameTime();
+
+        camera.target = carPosition;
 
         window.BeginDrawing(); {
             window.ClearBackground(raylib::Color::White());
@@ -49,20 +57,26 @@ int main() {
                 DrawBoundedModel(model, [&carPosition, &carHeading](raylib::Matrix m) {
                     return m.Translate(carPosition).RotateY(raylib::Degree(carHeading));
                 });
-                
             }
             camera.EndMode();
-            if (raylib::Keyboard::IsKeyDown(KEY_W)) {
-                targetSpeed += 0.1f;
+
+            if (raylib::Keyboard::IsKeyPressed(KEY_W)) {
+                targetSpeed += 2.0f;
             }
-            if (raylib::Keyboard::IsKeyDown(KEY_S)) {
-                targetSpeed -= 0.1f;  
+            if (raylib::Keyboard::IsKeyPressed(KEY_S)) {
+                targetSpeed -= 2.0f;
             }
-            if (raylib::Keyboard::IsKeyDown(KEY_A)) {
-                carHeading += 0.5f;   
+            if (raylib::Keyboard::IsKeyPressed(KEY_A)) {
+                carHeading += 45.0f;
             }
-            if (raylib::Keyboard::IsKeyDown(KEY_D)) {
-                carHeading -= 0.5f;
+            if (raylib::Keyboard::IsKeyPressed(KEY_D)) {
+                carHeading -= 45.0f;
+            }
+            if (raylib::Keyboard::IsKeyDown(KEY_Q)) {
+                carPosition.y += carSpeed * window.GetFrameTime();
+            }
+            if (raylib::Keyboard::IsKeyDown(KEY_E)) {
+                carPosition.y -= carSpeed * window.GetFrameTime();
             }
             if (raylib::Keyboard::IsKeyPressed(KEY_SPACE)) {
                 carSpeed = 0.0f;
