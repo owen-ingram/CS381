@@ -69,6 +69,5 @@ int main() {
     }
     UnloadMusicStream(ambientMusic);
     CloseAudioDevice();
-
     return 0;
 }
