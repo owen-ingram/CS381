@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/as4.dir/src/as4.cpp.o CMakeFiles/as4.dir/src/skybox.cpp.o -o as4  raylib-cpp/raylib/raylib/libraylib.a -lm -lpthread /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
