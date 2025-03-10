@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/as5.dir/src/as5.cpp.o CMakeFiles/as5.dir/src/skybox.cpp.o -o as5  raylib-cpp/raylib/raylib/libraylib.a -lm -lpthread /usr/lib/x86_64-linux-gnu/libGL.so /usr/lib/x86_64-linux-gnu/librt.a -lm -ldl 
