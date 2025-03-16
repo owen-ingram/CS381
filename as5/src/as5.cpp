@@ -23,30 +23,25 @@ void UpdateEntity(Entity& entity, float deltaTime) {
     if (entity.type == EntityType::CAR) {
         velocity.x = cos(radians) * entity.speed;
         velocity.z = -sin(radians) * entity.speed;
-    } else {  
-
-        float pitch = entity.rotation * (PI / 180.0f); 
-        velocity.x = cos(pitch) * entity.speed;  
-
-        float yaw = entity.rotation * (PI / 180.0f);  
-        velocity.z = sin(yaw) * entity.speed;
+    } 
+    else if (entity.type == EntityType::ROCKET) {
+        velocity.x = cos(radians) * entity.speed;
+        velocity.y = sin(radians) * entity.speed; 
     }
 
     entity.position = entity.position + velocity * deltaTime;
 }
 
 void DrawEntity(const Entity& entity, bool isSelected) {
-    raylib::Matrix transform = raylib::Matrix::Identity()
-        .Translate(entity.position);
-    
+    raylib::Matrix transform = raylib::Matrix::Identity().Translate(entity.position);
+
     if (entity.type == EntityType::CAR) {
         transform = transform.RotateY(raylib::Degree(90.0f)); 
         transform = transform.RotateY(raylib::Degree(entity.rotation));
-    }
+    } 
     else if (entity.type == EntityType::ROCKET) {
-        transform = transform.RotateX(raylib::Degree(entity.rotation));  
-        transform = transform.RotateY(raylib::Degree(entity.rotation));  
-        transform = transform.RotateZ(raylib::Degree(entity.rotation));  
+        transform = transform.RotateZ(raylib::Degree(270.0f)); 
+        transform = transform.RotateZ(raylib::Degree(entity.rotation));
     }
 
     entity.model->transform = transform;
@@ -56,7 +51,6 @@ void DrawEntity(const Entity& entity, bool isSelected) {
         DrawBoundingBox(entity.model->GetBoundingBox(), WHITE);
     }
 }
-
 
 int main() {
     raylib::Window window(800, 600, "CS381 - Assignment 5");
@@ -83,13 +77,8 @@ int main() {
 
         if (raylib::Keyboard::IsKeyPressed(KEY_W)) selected.speed += 2.0f;
         if (raylib::Keyboard::IsKeyPressed(KEY_S)) selected.speed -= 2.0f;
-        if (raylib::Keyboard::IsKeyPressed(KEY_A)) selected.rotation += 10.0f;  
-        if (raylib::Keyboard::IsKeyPressed(KEY_D)) selected.rotation -= 10.0f;  
-        if (raylib::Keyboard::IsKeyPressed(KEY_Q)) selected.rotation += 10.0f;  
-        if (raylib::Keyboard::IsKeyPressed(KEY_E)) selected.rotation -= 10.0f;  
-        if (raylib::Keyboard::IsKeyPressed(KEY_R)) selected.rotation += 10.0f;  
-        if (raylib::Keyboard::IsKeyPressed(KEY_F)) selected.rotation -= 10.0f;  
-
+        if (raylib::Keyboard::IsKeyPressed(KEY_A)) selected.rotation += 10.0f;
+        if (raylib::Keyboard::IsKeyPressed(KEY_D)) selected.rotation -= 10.0f;
         if (raylib::Keyboard::IsKeyPressed(KEY_SPACE)) selected.speed = 0.0f;
 
         for (auto& entity : entities) {
