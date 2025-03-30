@@ -305,4 +305,15 @@ CMakeFiles/as6.dir/src/as6.cpp.o: /home/obob/cs381/as6/src/as6.cpp \
  /usr/include/c++/13/bits/ranges_algobase.h \
  /usr/include/c++/13/pstl/glue_memory_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h /usr/include/c++/13/optional \
- /usr/include/c++/13/bits/enable_special_members.h
+ /usr/include/c++/13/bits/enable_special_members.h \
+ /usr/include/c++/13/algorithm /usr/include/c++/13/bits/stl_algo.h \
+ /usr/include/c++/13/bits/algorithmfwd.h \
+ /usr/include/c++/13/bits/stl_heap.h \
+ /usr/include/c++/13/bits/uniform_int_dist.h \
+ /usr/include/c++/13/bits/ranges_algo.h \
+ /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+ /home/obob/cs381/as6/src/skybox.hpp \
+ /home/obob/cs381/as6/src/../generated/skybox.vs \
+ /home/obob/cs381/as6/src/../generated/skybox.fs \
+ /home/obob/cs381/as6/src/../generated/cubemap.vs \
+ /home/obob/cs381/as6/src/../generated/cubemap.fs

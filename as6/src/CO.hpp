@@ -1,140 +1,195 @@
 #pragma once
-
-#define RAYLIB_SUPPORT_OIS
-#include <raylib-cpp.hpp>
-
-#include <memory>
 #include <vector>
-#include <optional>
+#include <memory>  
+#include <optional>  
+#include <algorithm> 
+#include <iostream>  
+#include "raylib-cpp.hpp" 
 
 namespace cs381 {
 
-	/**
-	 * @brief Base class for various components that can be attached to an entity.
-	 */
-	class Component {
-		struct Entity* object;
-		friend struct Entity;
+    // Forward declare Entity, to be used later in Component
+    struct Entity;
 
-	public:
-		struct Entity& Object() { return *object; }
-		struct TransformComponent& Transform();
-		bool enabled = true;
+    // Component class definition (base class for all components)
+    struct Component {
+    protected:
+        Entity* owner;  // Points to the Entity that owns this component
 
-		Component(struct Entity& e) : object(&e) {}
-		Component(struct Entity& e, bool enabled): object(&e), enabled(enabled) {} // Start
-		virtual void Tick(float dt) {}
-		virtual ~Component() {} // Cleanup
+    public:
+        // Constructor takes an Entity reference and sets the owner pointer
+        explicit Component(Entity& e) : owner(&e) {}
+        virtual ~Component() = default;  // Destructor
+        virtual void Update(float dt) {}  // Virtual function for updating components
+    };
 
-		template<std::derived_from<Component> T>
-		T& as() { return *dynamic_cast<T*>(this); }
-	};
+    // TransformComponent class, stores position and heading (direction) of an entity
+    struct TransformComponent : public Component {
+        raylib::Vector3 position;  // Position of the entity in 3D space
+        float heading;  // Direction the entity is facing (in degrees)
 
-	/**
-	 * @brief Component storing the positional data of a Entity
-	 */
-	struct TransformComponent: public Component {
-		using Component::Component;
-		raylib::Vector3 position = {0, 0, 0};
-		raylib::Degree heading = 0;
-	};
+        // Constructor initializes the position and heading
+        TransformComponent(Entity& e, raylib::Vector3 pos = {0, 0, 0}, float head = 0.0f)
+            : Component(e), position(pos), heading(head) {}
+    };
 
-	struct PhysicsComponent : public cs381::Component {
-		float speed = 0.0f;
-		float acceleration = 0.0f;
-		float maxSpeed = 10.0f;
-	
-		PhysicsComponent(cs381::Entity& e, float maxSpeed, float acceleration, float speed = 0.0f)
-			: cs381::Component(e), maxSpeed(maxSpeed), acceleration(acceleration), speed(speed) {}
-	
-			void Tick(float dt) override {
-				// Apply acceleration
-				speed += acceleration * dt;
-				if (speed > maxSpeed) speed = maxSpeed;  // Clamp speed
-			}
-			
-	};
+    // Entity class that owns Components
+    struct Entity {
+        std::vector<std::unique_ptr<Component>> components;  // List of components
 
+        // Constructor that adds a TransformComponent by default
+        Entity() {
+            AddComponent<TransformComponent>();  // Ensures TransformComponent is always added
+        }
 
-	/**
-	 * @brief Represents an object in the game world.
-	 */
-	struct Entity {
-		std::vector<std::unique_ptr<Component>> components = {};
+        // Template function to add a component to the entity
+        template <typename T, typename... Args>
+        void AddComponent(Args&&... args) {
+            // Prevent adding multiple TransformComponent instances
+            if (std::none_of(components.begin(), components.end(), [](const auto& c) {
+                    return dynamic_cast<TransformComponent*>(c.get());
+                })) {
+                components.push_back(std::make_unique<T>(*this, std::forward<Args>(args)...));
+                std::cout << "Adding component: " << typeid(T).name() << std::endl;  // Prints the type of component added
+            }
+        }
 
-		Entity() { AddComponent<TransformComponent>(); } // Entities have a transform by default!
-		Entity(const Entity&) = delete;
-		Entity(Entity&& other) : components(std::move(other.components)) {
-			for(auto& component: components)
-				component->object = this; // When we are moved make sure the components still point to us!
-		}
+        // Template function to get a component of a specific type
+        template <typename T>
+        std::optional<std::reference_wrapper<T>> GetComponent() {
+            for (auto& component : components) {
+                if (auto casted = dynamic_cast<T*>(component.get())) {
+                    return *casted;  // Return the component if found
+                }
+            }
+            std::cerr << "Component of type " << typeid(T).name() << " not found!\n";  // Print error if component not found
+            std::cerr << "Existing components: ";
+            for (const auto& component : components) {
+                std::cerr << typeid(*component).name() << " ";  // List all existing component types
+            }
+            std::cerr << std::endl;
+            return std::nullopt;  // Return empty optional if component not found
+        }
 
-		Entity& operator=(const Entity&) = delete;
-		Entity& operator=(Entity&& other) {
-			components = std::move(other.components);
-			for(auto& component: components)
-				component->object = this; // When we are moved make sure the components still point to us!
-			return *this;
-		}
+        // Update function to update all components
+        void Update(float dt) {
+            for (auto& component : components) {
+                component->Update(dt);  // Call update on each component
+            }
+        }
+    };
 
-		/**
-		 * @brief Performs actions during each game update for the entity and its components.
-		 * @param dt The time elapsed since the last update.
-		 */
-		void Tick(float dt) {
-			for(auto& componentPtr: components)
-				if(componentPtr->enabled)
-					componentPtr->Tick(dt);
-		}
+    // PhysicsComponent definition, handles movement and physics-related behavior
+    struct PhysicsComponent : public Component {
+        float speed;  // Current speed of the entity
+        float acceleration;  // Acceleration rate
+        float maxSpeed;  // Maximum speed
 
-		/**
-		 * @brief Adds a new component of type T to the entity.
-		 * @tparam T The type of component to add.
-		 * @tparam Ts The types of arguments to pass to the component's constructor.
-		 * @param args The arguments to pass to the component's constructor.
-		 * @return The index of the added component.
-		 */
-		template<std::derived_from<Component> T, typename... Ts>
-		size_t AddComponent(Ts... args) {
-			std::unique_ptr<Component> component = std::make_unique<T>(*this, std::forward<Ts>(args) ...);
-			components.push_back(std::move(component));
-			return components.size() - 1;
-		}
+        // Constructor to initialize physics properties
+        PhysicsComponent(Entity& e, float maxSpd, float accel)
+            : Component(e), speed(0.0f), acceleration(accel), maxSpeed(maxSpd) {}
 
-		// How could we remove a component?
+        // Update function to apply physics to the entity
+        void Update(float dt) override {
+            // Ensure the entity has a TransformComponent before proceeding
+            auto transformOpt = owner->GetComponent<TransformComponent>();
+            if (!transformOpt) {
+                std::cerr << "Error: Entity is missing TransformComponent!\n";  // Print error if missing TransformComponent
+                return;
+            }
+            TransformComponent& transform = transformOpt.value();
+            
+            // Apply acceleration to speed and clamp within bounds
+            speed += acceleration * dt;
+            speed = std::clamp(speed, 0.0f, maxSpeed);
 
-		/**
-		 * @brief Retrieves a component of type T from the entity.
-		 * @tparam T The type of component to retrieve.
-		 * @return An optional reference to the component if found, or std::nullopt if not found.
-		 */
-		template<std::derived_from<Component> T>
-		std::optional<std::reference_wrapper<T>> GetComponent() {
-			if constexpr(std::is_same_v<T, TransformComponent>){ // This extra step here allows us to skip itterator overhead since we know the transform component should be in slot 0
-				T* cast = dynamic_cast<T*>(components[0].get());
-				if(cast) return *cast;
-			}
+            // Move the entity based on heading and speed
+            float radians = transform.heading * (PI / 180.0f);  // Convert heading to radians
+            transform.position.x += cos(radians) * speed * dt;  // Move along X-axis
+            transform.position.z -= sin(radians) * speed * dt;  // Move along Z-axis (note the inversion in raylib)
+        }
+    };
 
-			for(auto& componentPtr: components){
-				T* cast = dynamic_cast<T*>(componentPtr.get());
-				if(cast) return *cast;
-			}
+    // RenderComponent definition, handles drawing the entity's model
+    struct RenderComponent : public Component {
+        raylib::Model* model;  // Pointer to the model being rendered
 
-			return {};
-		}
+        // Constructor to initialize the model
+        RenderComponent(Entity& e, raylib::Model* m)
+            : Component(e), model(m) {
+            std::cout << "RenderComponent added!" << std::endl;  // Print message when added
+        }
 
-		/**
-		 * @brief Retrieves this object's transform...
-		 * @return The object's transform component.
-		 * @note this function has undefined behavior (probably a crash...) if the transform component is ever removed!
-		 */
-		TransformComponent& Transform() { return *GetComponent<TransformComponent>(); }
-	};
+        // Update function to update the model's transformation and render it
+        void Update(float dt) override {
+            // Ensure the entity has a TransformComponent before proceeding
+            auto transformOpt = owner->GetComponent<TransformComponent>();
+            if (!transformOpt.has_value()) {
+                std::cerr << "Error: TransformComponent not found!" << std::endl;  // Print error if missing TransformComponent
+                return;
+            }
 
-	/**
-	 * @brief Syntax sugar function that provides access to the object's transform component
-	 * @return The object's transform component.
-	 * @note this function has undefined behavior (probably a crash...) if the transform component is ever removed!
-	 */
-	TransformComponent& Component::Transform() { return Object().Transform(); }
-}
+            auto& transform = transformOpt.value().get();
+            std::cout << "Updating RenderComponent at position: "
+                      << transform.position.x << ", "
+                      << transform.position.y << ", "
+                      << transform.position.z << std::endl;  // Print position
+
+            // Update the model's transformation matrix based on the transform component
+            model->transform = raylib::Matrix::Identity()
+                .Translate(transform.position)  // Apply translation to position
+                .RotateY(raylib::Degree(transform.heading));  // Apply rotation based on heading
+
+            // Draw the model on screen
+            model->Draw({});
+        }
+    };
+
+    // InputComponent definition, handles user input for controlling the entity
+    struct InputComponent : public Component {
+        float turnSpeed = 90.0f;  // Turning speed in degrees per second
+        bool prevW = false, prevS = false, prevA = false, prevD = false;  // Flags for tracking key presses
+
+        // Constructor to initialize the input component
+        InputComponent(Entity& e) : Component(e) {}
+
+        // Update function to handle input and update the entity's movement
+        void Update(float dt) override {
+            // Ensure the entity has both TransformComponent and PhysicsComponent before proceeding
+            auto transformOpt = owner->GetComponent<TransformComponent>();
+            auto physicsOpt = owner->GetComponent<PhysicsComponent>();
+
+            if (!transformOpt.has_value() || !physicsOpt.has_value()) {
+                std::cerr << "Error: Missing TransformComponent or PhysicsComponent!" << std::endl;  // Print error if missing components
+                return;
+            }
+
+            auto& transform = transformOpt.value().get();
+            auto& physics = physicsOpt.value().get();
+
+            // Handle buffered input and update the speed/heading
+            if (IsKeyPressed(KEY_W) && !prevW) {
+                physics.speed += 2.0f * dt;  // Increase speed when 'W' is pressed
+            }
+            if (IsKeyPressed(KEY_S) && !prevS) {
+                physics.speed -= 2.0f * dt;  // Decrease speed when 'S' is pressed
+            }
+            if (IsKeyPressed(KEY_A) && !prevA) {
+                transform.heading += turnSpeed * dt;  // Turn left when 'A' is pressed
+            }
+            if (IsKeyPressed(KEY_D) && !prevD) {
+                transform.heading -= turnSpeed * dt;  // Turn right when 'D' is pressed
+            }
+
+            // Update previous key states for next frame
+            prevW = IsKeyDown(KEY_W);
+            prevS = IsKeyDown(KEY_S);
+            prevA = IsKeyDown(KEY_A);
+            prevD = IsKeyDown(KEY_D);
+
+            // Reset speed to 0 when spacebar is pressed
+            if (IsKeyPressed(KEY_SPACE)) physics.speed = 0;
+        }
+    };
+
+} // namespace cs381
