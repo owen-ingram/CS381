@@ -9,7 +9,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
   "/home/obob/cs381/as7/CMakeLists.txt"
   "/home/obob/cs381/as7/assets/Kenny Car Kit/Textures/colormap.png"
-  "/home/obob/cs381/as7/assets/Kenny Car Kit/ambulance.glb"
   "/home/obob/cs381/as7/assets/Kenny Space Kit/rocketA.glb"
   "/home/obob/cs381/as7/assets/textures/skybox.png"
   "CMakeFiles/3.28.3/CMakeCCompiler.cmake"
@@ -102,7 +101,6 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "textures/skybox.png"
   "meshes/rocketModel.glb"
-  "meshes/ambulanceModel.glb"
   "meshes/Textures/colormap.png"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "raylib-cpp/CMakeFiles/CMakeDirectoryInformation.cmake"

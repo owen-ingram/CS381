@@ -19,10 +19,8 @@ void DrawBoundedModel(raylib::Model& model, Transformer auto transformer) {
     model.transform = backup;
 }
 
-//global pointer to the currently selected entity
 Entity* gSelectedEntity = nullptr;
 
-//component to render a model (and optionally a bounding box)
 struct MeshRenderComponent : public Component {
     raylib::Model* model = nullptr;
     bool drawBoundingBox = false;
@@ -44,7 +42,6 @@ struct MeshRenderComponent : public Component {
     }
 };
 
-//component to update position based on velocity
 struct PhysicsComponent : public Component {
     float velocity = 0;
     float acceleration = 10;
@@ -63,7 +60,6 @@ struct PhysicsComponent : public Component {
     }
 };
 
-//added input component to control model movement physics
 struct InputComponent : public Component {
     PhysicsComponent* physics;
     TransformComponent* transform;
@@ -82,144 +78,89 @@ struct InputComponent : public Component {
 };
 
 int main() {
-    raylib::Window window(800, 600, "CS381 - Assignment 6");
+    raylib::Window window(800, 600, "CS381 - Conenado");
     window.SetState(FLAG_WINDOW_RESIZABLE);
-
-    /*InitAudioDevice();
-    Music engineMusic = LoadMusicStream("../assets/audio/engine.mp3");
-    PlayMusicStream(engineMusic);*/
 
     cs381::SkyBox sky("../assets/textures/skybox.png");
 
-    raylib::Model carModel("../assets/Kenny Car Kit/sedan.glb");
+    raylib::Model carModel("../assets/Kenny Car Kit/cone.glb");
     carModel.transform = raylib::Matrix::Identity().Scale(5);
 
-    raylib::Model rocketModel("../assets/Kenny Space Kit/rocketA.glb");
-    rocketModel.transform = raylib::Matrix::Identity().Scale(2);
+    raylib::Model goalModel = raylib::Mesh::Sphere(1.0f, 16, 16).LoadModelFrom();
+    goalModel.transform = raylib::Matrix::Identity().Scale(2.0f);
 
     raylib::Model grass = raylib::Mesh::Plane(100, 100, 1, 1).LoadModelFrom();
     raylib::Texture grassTexture = raylib::Texture("../assets/textures/grass.jpg");
     grass.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = grassTexture;
 
     std::vector<Entity> entities;
-
-    for (int i = 0; i < 5; i++) {
-        Entity car;
-        auto& transform = car.GetComponent<TransformComponent>().value().get();
-        transform.position = raylib::Vector3(i * 5.0f, 0.0f, i * -5.0f);
-
-        //cars start with 0 velocity.
-        car.AddComponent<PhysicsComponent>(0.0f, 20.0f + i * 5);
-        car.AddComponent<MeshRenderComponent>();
-        car.GetComponent<MeshRenderComponent>().value().get().model = &carModel;
-
-        auto physicsOpt = car.GetComponent<PhysicsComponent>();
-        auto transformOpt = car.GetComponent<TransformComponent>();
-        car.AddComponent<InputComponent>(&physicsOpt.value().get(), &transformOpt.value().get());
-
-        entities.push_back(std::move(car));
-    }
-
-    for (int i = 0; i < 5; i++) {
-        Entity rocket;
-        auto& transform = rocket.GetComponent<TransformComponent>().value().get();
-        //positioned behind cars.
-        transform.position = raylib::Vector3(i * 5.0f, 0.0f, i * -5.0f + 3.0f);
-
-        rocket.AddComponent<PhysicsComponent>(0.0f, 10.0f);
-        rocket.AddComponent<MeshRenderComponent>();
-        rocket.GetComponent<MeshRenderComponent>().value().get().model = &rocketModel;
-
-        auto physicsOpt = rocket.GetComponent<PhysicsComponent>();
-        auto transformOpt = rocket.GetComponent<TransformComponent>();
-        rocket.AddComponent<InputComponent>(&physicsOpt.value().get(), &transformOpt.value().get());
-
-        entities.push_back(std::move(rocket));
-    }
-
+    int score = 0;
     int selectedIndex = 0;
-    gSelectedEntity = &entities[selectedIndex];
 
-    //create a Camera3D
+    // Define static goal position
+    raylib::Vector3 goalPosition(0.0f, 2.0f, -30.0f);
+    float goalRadius = 5.0f;
+
+    // Spawn car
+    Entity car;
+    auto& transform = car.GetComponent<TransformComponent>().value().get();
+    transform.position = raylib::Vector3(5.0f, 0.0f, -5.0f);
+    
+    car.AddComponent<PhysicsComponent>(0.0f, 20.0f);
+    car.AddComponent<MeshRenderComponent>();
+    car.GetComponent<MeshRenderComponent>().value().get().model = &carModel;
+
+    auto physicsOpt = car.GetComponent<PhysicsComponent>();
+    auto transformOpt = car.GetComponent<TransformComponent>();
+    car.AddComponent<InputComponent>(&physicsOpt.value().get(), &transformOpt.value().get());
+
+    entities.push_back(std::move(car));
+    gSelectedEntity = &entities[0];
+
+
     raylib::Camera3D camera(
-         raylib::Vector3(0.0f, 10.0f, 10.0f),  
-         raylib::Vector3(0.0f, 0.0f, 0.0f),    
-         raylib::Vector3(0.0f, 1.0f, 0.0f), 
-         60.0f                                  
+        raylib::Vector3(0.0f, 20.0f, 40.0f), // Higher and farther
+        raylib::Vector3(0.0f, 0.0f, 0.0f), 
+        raylib::Vector3(0.0f, 1.0f, 0.0f), 
+        60.0f
     );
-
-    auto lastTime = std::chrono::high_resolution_clock::now();
+        auto lastTime = std::chrono::high_resolution_clock::now();
 
     while (!window.ShouldClose()) {
-        //update music stream so it loops properly EC
-        //UpdateMusicStream(engineMusic);
-
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> deltaTime = currentTime - lastTime;
         lastTime = currentTime;
         float dt = deltaTime.count();
 
-        //process entity selection
-        if (IsKeyPressed(KEY_TAB)) {
-            selectedIndex = (selectedIndex + 1) % entities.size();
-            gSelectedEntity = &entities[selectedIndex];
-        }
-        //update bounding box flag based on selection
-        for (int i = 0; i < entities.size(); i++) {
-            auto renderOpt = entities[i].GetComponent<MeshRenderComponent>();
-            if (renderOpt.has_value()) {
-                renderOpt->get().drawBoundingBox = (&entities[i] == gSelectedEntity);
-            }
+        // Collision detection
+        auto& carTransform = entities[0].Transform();
+        if (CheckCollisionSpheres(carTransform.position, 2.5f, goalPosition, goalRadius)) {
+            score++;
+            std::cout << "Goal Reached! Score: " << score << std::endl;
+            carTransform.position = raylib::Vector3(5.0f, 0.0f, -5.0f);
         }
 
+        // Entity updates
         for (auto& entity : entities) {
-            for(auto& compPtr : entity.components) {
-                if (dynamic_cast<MeshRenderComponent*>(compPtr.get()) == nullptr) {
-                    compPtr->Tick(dt);
-                }
-            }
-        }
-
-        for (auto& entity : entities) {
-            auto& t = entity.GetComponent<TransformComponent>().value().get();
-            if (t.position.x < -50.0f) { t.position.x = -50.0f; }
-            if (t.position.x > 50.0f)  { t.position.x = 50.0f;  }
-            if (t.position.z < -50.0f) { t.position.z = -50.0f; }
-            if (t.position.z > 50.0f)  { t.position.z = 50.0f;  }
-        }
-
-        if (gSelectedEntity != nullptr) {
-            auto& selTransform = gSelectedEntity->Transform();
-            float angle = static_cast<float>(selTransform.heading) * DEG2RAD;
-            raylib::Vector3 localOffset(0.0f, 10.0f, -20.0f);
-            raylib::Vector3 rotatedOffset(
-                localOffset.x * cos(angle) - localOffset.z * sin(angle),
-                localOffset.y,
-                localOffset.x * sin(angle) + localOffset.z * cos(angle)
-            );
-            camera.position = selTransform.position + rotatedOffset;
-            camera.target = selTransform.position;
+            entity.Tick(dt);
         }
 
         window.BeginDrawing();
-        window.ClearBackground(raylib::Color::Black());
+        window.ClearBackground(raylib::Color(0, 0, 0, 255));
 
         BeginMode3D(camera);
             sky.Draw();
             grass.Draw({});
+            goalModel.Draw(goalPosition, 1.0f, WHITE);
             for (auto& entity : entities) {
-                auto renderOpt = entity.GetComponent<MeshRenderComponent>();
-                if (renderOpt.has_value()) {
-                    renderOpt->get().Tick(0);
+                if (auto renderCompOpt = entity.GetComponent<MeshRenderComponent>(); renderCompOpt.has_value()) {
+                    renderCompOpt->get().Tick(0);
                 }
             }
         EndMode3D();
 
+        raylib::DrawText(("Score: " + std::to_string(score)).c_str(), 10, 10, 20, raylib::Color(255, 255, 255, 255));
         window.EndDrawing();
     }
-
-    /*UnloadMusicStream(engineMusic);
-    CloseAudioDevice();*/
-
     return 0;
 }
