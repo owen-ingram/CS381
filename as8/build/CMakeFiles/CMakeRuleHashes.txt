@@ -1,0 +1,21 @@
+# Hashes of file build rules.
+95ef838cca006cb5cfc18107a26c6645 raylib-cpp/raylib/CMakeFiles/uninstall
+7cd0801f574cfcf5493162eeb45badc8 raylib-cpp/raylib/raylib/external/glfw/src/CMakeFiles/update_mappings
+122f85c47efbf0f1b4a42dc4b6a71611 raylib-cpp/raylib/raylib/external/glfw/src/fractional-scale-v1-client-protocol-code.h
+089ddbacec9dc0499e9805b7d3e2f9cb raylib-cpp/raylib/raylib/external/glfw/src/fractional-scale-v1-client-protocol.h
+531be424de34916b0c6bc2e9ab251bca raylib-cpp/raylib/raylib/external/glfw/src/idle-inhibit-unstable-v1-client-protocol-code.h
+9e8a5f7c92849aa7faa87481e434028c raylib-cpp/raylib/raylib/external/glfw/src/idle-inhibit-unstable-v1-client-protocol.h
+dad0cc4f4e25922837473963315e2e39 raylib-cpp/raylib/raylib/external/glfw/src/pointer-constraints-unstable-v1-client-protocol-code.h
+dd2b5d5fd431db2fe67329995c1db217 raylib-cpp/raylib/raylib/external/glfw/src/pointer-constraints-unstable-v1-client-protocol.h
+9f19345bf0f69c03179d8ee525cfa717 raylib-cpp/raylib/raylib/external/glfw/src/relative-pointer-unstable-v1-client-protocol-code.h
+121ec37418abf0e16900b2c42eddf6bc raylib-cpp/raylib/raylib/external/glfw/src/relative-pointer-unstable-v1-client-protocol.h
+d8a4288d0002f4a08213d4db5739dd61 raylib-cpp/raylib/raylib/external/glfw/src/viewporter-client-protocol-code.h
+0b2a84ccfcac7aa88282907f89d00864 raylib-cpp/raylib/raylib/external/glfw/src/viewporter-client-protocol.h
+aab57a38d5b7b94b906eb6e6afa9d382 raylib-cpp/raylib/raylib/external/glfw/src/wayland-client-protocol-code.h
+4ace50f73288aea7efc41dc460171667 raylib-cpp/raylib/raylib/external/glfw/src/wayland-client-protocol.h
+81b3ff1396ea73ec68068b7766f99215 raylib-cpp/raylib/raylib/external/glfw/src/xdg-activation-v1-client-protocol-code.h
+daeb594762d503c9f9a417725c9b4360 raylib-cpp/raylib/raylib/external/glfw/src/xdg-activation-v1-client-protocol.h
+9babea2438c3d45d9bfa838b27cf2d37 raylib-cpp/raylib/raylib/external/glfw/src/xdg-decoration-unstable-v1-client-protocol-code.h
+55baf234111029e3ad30421dcfc8319b raylib-cpp/raylib/raylib/external/glfw/src/xdg-decoration-unstable-v1-client-protocol.h
+613a7796ae4ad8737453ff82597e5363 raylib-cpp/raylib/raylib/external/glfw/src/xdg-shell-client-protocol-code.h
+0a022cc82dc8a7069ed3e5000d453243 raylib-cpp/raylib/raylib/external/glfw/src/xdg-shell-client-protocol.h
