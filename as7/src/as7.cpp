@@ -7,7 +7,7 @@
 
 using namespace cs381;
 
-template<typename T> 
+template<typename T>
 concept Transformer = requires(T t, raylib::Matrix m) {
     { t(m) } -> std::convertible_to<raylib::Matrix>;
 };
@@ -25,13 +25,15 @@ struct MeshRenderComponent : public Component {
     raylib::Model* model = nullptr;
     bool drawBoundingBox = false;
     using Component::Component;
-    
+
     void Tick(float dt) override {
-        if (model == nullptr) return;
+        if (!model) return;
         auto& transform = Object().Transform();
         DrawBoundedModel(*model, [&](raylib::Matrix matrix) {
-            return matrix.Translate(transform.position)
-                         .RotateY(static_cast<float>(transform.heading) * DEG2RAD);
+            return raylib::Matrix::Identity()
+                .Scale(5.0f)
+                .RotateY(static_cast<float>(transform.heading) * DEG2RAD)
+                .Translate(transform.position);
         });
         if (drawBoundingBox) {
             raylib::BoundingBox box = model->GetBoundingBox();
@@ -45,10 +47,10 @@ struct MeshRenderComponent : public Component {
 struct PhysicsComponent : public Component {
     float velocity = 0;
     float acceleration = 10;
-    
+
     PhysicsComponent(Entity& e, float vel, float accel)
         : Component(e), velocity(vel), acceleration(accel) {}
-    
+
     void Tick(float dt) override {
         auto& transform = Object().Transform();
         raylib::Vector3 direction = raylib::Vector3(
@@ -63,16 +65,17 @@ struct PhysicsComponent : public Component {
 struct InputComponent : public Component {
     PhysicsComponent* physics;
     TransformComponent* transform;
-    
+
     InputComponent(Entity& e, PhysicsComponent* phys, TransformComponent* trans)
         : Component(e), physics(phys), transform(trans) {}
-    
+
     void Tick(float dt) override {
         if (&Object() != gSelectedEntity) return;
-        if (IsKeyDown(KEY_W)) physics->velocity += physics->acceleration * dt;
-        if (IsKeyDown(KEY_S)) physics->velocity -= physics->acceleration * dt;
-        if (IsKeyDown(KEY_A)) transform->heading += 80.0f * dt;
-        if (IsKeyDown(KEY_D)) transform->heading -= 80.0f * dt;
+
+        if (IsKeyPressed(KEY_W)) physics->velocity += physics->acceleration;
+        if (IsKeyPressed(KEY_S)) physics->velocity -= physics->acceleration;
+        if (IsKeyPressed(KEY_A)) transform->heading += 15;
+        if (IsKeyPressed(KEY_D)) transform->heading -= 15;
         if (IsKeyPressed(KEY_SPACE)) physics->velocity = 0;
     }
 };
@@ -95,36 +98,32 @@ int main() {
 
     std::vector<Entity> entities;
     int score = 0;
-    int selectedIndex = 0;
 
-    // Define static goal position
     raylib::Vector3 goalPosition(0.0f, 2.0f, -30.0f);
     float goalRadius = 5.0f;
 
-    // Spawn car
     Entity car;
     auto& transform = car.GetComponent<TransformComponent>().value().get();
     transform.position = raylib::Vector3(5.0f, 0.0f, -5.0f);
-    
+
     car.AddComponent<PhysicsComponent>(0.0f, 20.0f);
     car.AddComponent<MeshRenderComponent>();
     car.GetComponent<MeshRenderComponent>().value().get().model = &carModel;
 
-    auto physicsOpt = car.GetComponent<PhysicsComponent>();
-    auto transformOpt = car.GetComponent<TransformComponent>();
-    car.AddComponent<InputComponent>(&physicsOpt.value().get(), &transformOpt.value().get());
+    auto& physics = car.GetComponent<PhysicsComponent>().value().get();
+    car.AddComponent<InputComponent>(&physics, &transform);
 
     entities.push_back(std::move(car));
     gSelectedEntity = &entities[0];
 
-
     raylib::Camera3D camera(
-        raylib::Vector3(0.0f, 20.0f, 40.0f), // Higher and farther
-        raylib::Vector3(0.0f, 0.0f, 0.0f), 
-        raylib::Vector3(0.0f, 1.0f, 0.0f), 
+        raylib::Vector3(0.0f, 20.0f, 40.0f),
+        raylib::Vector3(0.0f, 0.0f, 0.0f),
+        raylib::Vector3(0.0f, 1.0f, 0.0f),
         60.0f
     );
-        auto lastTime = std::chrono::high_resolution_clock::now();
+
+    auto lastTime = std::chrono::high_resolution_clock::now();
 
     while (!window.ShouldClose()) {
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -132,7 +131,7 @@ int main() {
         lastTime = currentTime;
         float dt = deltaTime.count();
 
-        // Collision detection
+        // Collision
         auto& carTransform = entities[0].Transform();
         if (CheckCollisionSpheres(carTransform.position, 2.5f, goalPosition, goalRadius)) {
             score++;
@@ -140,10 +139,7 @@ int main() {
             carTransform.position = raylib::Vector3(5.0f, 0.0f, -5.0f);
         }
 
-        // Entity updates
-        for (auto& entity : entities) {
-            entity.Tick(dt);
-        }
+        for (auto& entity : entities) entity.Tick(dt);
 
         window.BeginDrawing();
         window.ClearBackground(raylib::Color(0, 0, 0, 255));
@@ -153,8 +149,8 @@ int main() {
             grass.Draw({});
             goalModel.Draw(goalPosition, 1.0f, WHITE);
             for (auto& entity : entities) {
-                if (auto renderCompOpt = entity.GetComponent<MeshRenderComponent>(); renderCompOpt.has_value()) {
-                    renderCompOpt->get().Tick(0);
+                if (auto renderComp = entity.GetComponent<MeshRenderComponent>(); renderComp.has_value()) {
+                    renderComp->get().Tick(0);
                 }
             }
         EndMode3D();
@@ -162,5 +158,6 @@ int main() {
         raylib::DrawText(("Score: " + std::to_string(score)).c_str(), 10, 10, 20, raylib::Color(255, 255, 255, 255));
         window.EndDrawing();
     }
+
     return 0;
 }
