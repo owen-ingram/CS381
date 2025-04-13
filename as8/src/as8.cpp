@@ -107,17 +107,55 @@ void Physics2DSystem(float dt) {
 void Physics3DSystem(float dt) {
     for (EntityID e = 0; e < MAX_ENTITIES; ++e) {
         if (hasPhysics3D[e] && hasVelocity[e]) {
-            Vector3 dir = Vector3RotateByQuaternion({1, 0, 0}, physics3DPool[e].rotation);
-            velocityPool[e].velocity = Vector3Scale(dir, velocityPool[e].speed);
+            auto& phys = physics3DPool[e];
+            auto& vel = velocityPool[e];
+
+            // Apply rotation and movement if velocity is non-zero
+            if (vel.velocity.x != 0.0f || vel.velocity.y != 0.0f || vel.velocity.z != 0.0f) {
+                // Apply rotation based on angular velocity (yaw, pitch, roll)
+                Quaternion deltaRot = QuaternionFromEuler(
+                    phys.angular.x * dt, // Pitch
+                    phys.angular.y * dt, // Yaw
+                    phys.angular.z * dt  // Roll
+                );
+                phys.rotation = QuaternionNormalize(QuaternionMultiply(phys.rotation, deltaRot));
+
+                // Calculate forward direction based on current rotation
+                Vector3 dir = Vector3RotateByQuaternion({1, 0, 0}, phys.rotation); // forward direction
+                dir.y = 0; // ignore Y for rotation-based movement to keep it on a flat plane
+
+                // Forward movement based on the velocity
+                Vector3 forward = Vector3Scale(dir, vel.velocity.y); // Apply velocity along forward direction
+                vel.velocity.x = forward.x; // Update the velocity in the x direction
+                vel.velocity.z = forward.z; // Update the velocity in the z direction
+            }
         }
     }
 }
 
+
+
 void RenderSystem() {
     for (EntityID e = 0; e < MAX_ENTITIES; ++e) {
         if (hasTransform[e] && hasRender[e]) {
+            // Start with the translation matrix
             Matrix transform = MatrixTranslate(transformPool[e].position.x, transformPool[e].position.y, transformPool[e].position.z);
             transform = MatrixMultiply(transform, MatrixScale(transformPool[e].scale.x, transformPool[e].scale.y, transformPool[e].scale.z));
+
+            if (hasPhysics2D[e]) {
+                // Apply 2D rotation for the car
+                auto& phys = physics2DPool[e];
+                Matrix rotationMatrix = MatrixRotateY(phys.heading * DEG2RAD); // Rotate around Y-axis for car's heading
+                transform = MatrixMultiply(transform, rotationMatrix);  // Apply the rotation to the transformation matrix
+            }
+
+            if (hasPhysics3D[e]) {
+                // Apply the quaternion rotation for the rocket
+                auto& phys = physics3DPool[e];
+                Matrix rotationMatrix = QuaternionToMatrix(phys.rotation);  // Convert quaternion to matrix
+                transform = MatrixMultiply(transform, rotationMatrix);  // Apply the rotation to the transformation matrix
+            }
+
             renderPool[e].model->transform = transform;
             renderPool[e].model->Draw({});
 
@@ -128,29 +166,51 @@ void RenderSystem() {
     }
 }
 
+
 void InputSystem(float dt) {
     EntityID selected = entityOrder[selectedIndex];
     if (!hasVelocity[selected]) return;
 
     auto& vel = velocityPool[selected];
 
-    if (IsKeyDown(KEY_W)) vel.speed = std::min(vel.speed + vel.acceleration * dt, vel.maxSpeed);
-    if (IsKeyDown(KEY_S)) vel.speed = std::max(vel.speed - vel.acceleration * dt, -vel.maxSpeed);
     if (hasPhysics2D[selected]) {
+        if (IsKeyDown(KEY_W)) vel.speed = std::min(vel.speed + vel.acceleration * dt, vel.maxSpeed);
+        if (IsKeyDown(KEY_S)) vel.speed = std::max(vel.speed - vel.acceleration * dt, -vel.maxSpeed);
+
         auto& phys = physics2DPool[selected];
         if (IsKeyDown(KEY_A)) phys.heading += phys.turnRate * dt;
         if (IsKeyDown(KEY_D)) phys.heading -= phys.turnRate * dt;
     }
+
     if (hasPhysics3D[selected]) {
+        // Movement for the rocket (continue moving even if no keys are pressed)
+        if (IsKeyDown(KEY_W)) {
+            vel.velocity.y = std::min(vel.velocity.y + vel.acceleration * dt, vel.maxSpeed);
+        } else if (IsKeyDown(KEY_S)) {
+            vel.velocity.y = std::max(vel.velocity.y - vel.acceleration * dt, -vel.maxSpeed);
+        }
+        // If no key is pressed, continue with the current velocity
+        else {
+            // This line ensures that the velocity is maintained when no key is pressed
+            vel.velocity.y = vel.velocity.y;
+        }
+
+        // Stop rocket movement when Space is pressed
+        if (IsKeyPressed(KEY_SPACE)) {
+            vel.velocity = {0.0f, 0.0f, 0.0f};  // Explicitly set all velocity components to zero
+        }
+
+        // Apply angular rotations for rocket (yaw, pitch, roll)
         auto& phys = physics3DPool[selected];
-        if (IsKeyDown(KEY_A)) phys.angular.y += 1 * dt;
-        if (IsKeyDown(KEY_D)) phys.angular.y -= 1 * dt;
-        if (IsKeyDown(KEY_R)) phys.angular.x += 1 * dt;
-        if (IsKeyDown(KEY_F)) phys.angular.x -= 1 * dt;
-        if (IsKeyDown(KEY_Q)) phys.angular.z += 1 * dt;
-        if (IsKeyDown(KEY_E)) phys.angular.z -= 1 * dt;
+        if (IsKeyDown(KEY_A)) phys.angular.y += 1 * dt;  // Yaw
+        if (IsKeyDown(KEY_D)) phys.angular.y -= 1 * dt;  // Yaw
+        if (IsKeyDown(KEY_R)) phys.angular.x += 1 * dt;  // Pitch
+        if (IsKeyDown(KEY_F)) phys.angular.x -= 1 * dt;  // Pitch
+        if (IsKeyDown(KEY_Q)) phys.angular.z += 1 * dt;  // Roll
+        if (IsKeyDown(KEY_E)) phys.angular.z -= 1 * dt;  // Roll
     }
-    if (IsKeyPressed(KEY_SPACE)) vel.speed = 0.0f;
+
+    if (IsKeyPressed(KEY_SPACE)) vel.speed = 0.0f;  // Stop car if space is pressed
 }
 
 void SelectionSystem() {
@@ -174,6 +234,10 @@ int main() {
     rocketModel = raylib::Model("../assets/Kenny Space Kit/rocketA.glb");
 
     cs381::SkyBox sky("textures/skybox.png");
+
+    raylib::Model grass = raylib::Mesh::Plane(100, 100, 1, 1).LoadModelFrom();
+    raylib::Texture grassTexture = raylib::Texture("../assets/textures/grass.jpg");
+    grass.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = grassTexture;
 
     for (int i = 0; i < 5; i++) {
         float speed = 10 + i * 2;
@@ -202,6 +266,7 @@ int main() {
         camera.BeginMode();
 
         sky.Draw();
+        grass.Draw({});
         RenderSystem();
 
         camera.EndMode();

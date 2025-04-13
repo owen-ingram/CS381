@@ -101,11 +101,6 @@ set(CMAKE_MAKEFILE_OUTPUTS
 set(CMAKE_MAKEFILE_PRODUCTS
   "textures/skybox.png"
   "meshes/rocketModel.glb"
-  "meshes/rocketModel.glb"
-  "meshes/rocketModel.glb"
-  "meshes/rocketModel.glb"
-  "meshes/rocketModel.glb"
-  "meshes/rocketModel.glb"
   "meshes/Textures/colormap.png"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "raylib-cpp/CMakeFiles/CMakeDirectoryInformation.cmake"
