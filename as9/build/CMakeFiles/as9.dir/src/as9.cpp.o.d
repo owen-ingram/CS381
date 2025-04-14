@@ -233,19 +233,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
  /home/obob/cs381/as9/raylib-cpp/include/./VrStereoConfig.hpp \
  /home/obob/cs381/as9/raylib-cpp/include/./Wave.hpp \
  /home/obob/cs381/as9/raylib-cpp/include/./Window.hpp \
- /home/obob/cs381/as9/src/skybox.hpp \
- /home/obob/cs381/as9/src/../generated/skybox.vs \
- /home/obob/cs381/as9/src/../generated/skybox.fs \
- /home/obob/cs381/as9/src/../generated/cubemap.vs \
- /home/obob/cs381/as9/src/../generated/cubemap.fs \
- /home/obob/cs381/as9/src/ECS.hpp /usr/include/c++/13/memory \
- /usr/include/c++/13/bits/stl_tempbuf.h \
- /usr/include/c++/13/bits/stl_raw_storage_iter.h \
- /usr/include/c++/13/bits/align.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /usr/include/c++/13/bits/unique_ptr.h /usr/include/c++/13/ostream \
+ /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
  /usr/include/c++/13/ios /usr/include/c++/13/bits/ios_base.h \
  /usr/include/c++/13/ext/atomicity.h \
  /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
@@ -276,7 +264,20 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
  /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc \
- /usr/include/c++/13/bits/ostream.tcc \
+ /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
+ /usr/include/c++/13/bits/istream.tcc /home/obob/cs381/as9/src/skybox.hpp \
+ /home/obob/cs381/as9/src/../generated/skybox.vs \
+ /home/obob/cs381/as9/src/../generated/skybox.fs \
+ /home/obob/cs381/as9/src/../generated/cubemap.vs \
+ /home/obob/cs381/as9/src/../generated/cubemap.fs \
+ /home/obob/cs381/as9/src/ECS.hpp /usr/include/c++/13/memory \
+ /usr/include/c++/13/bits/stl_tempbuf.h \
+ /usr/include/c++/13/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/13/bits/align.h \
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /usr/include/c++/13/bits/unique_ptr.h \
  /usr/include/c++/13/bits/shared_ptr.h \
  /usr/include/c++/13/bits/shared_ptr_base.h \
  /usr/include/c++/13/bits/allocated_ptr.h \
@@ -313,10 +314,8 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
  /usr/include/c++/13/pstl/glue_memory_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h /usr/include/c++/13/deque \
  /usr/include/c++/13/bits/stl_deque.h /usr/include/c++/13/bits/deque.tcc \
- /usr/include/c++/13/iostream /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/ranges \
- /usr/include/c++/13/iterator /usr/include/c++/13/bits/stream_iterator.h \
- /usr/include/c++/13/optional \
+ /usr/include/c++/13/ranges /usr/include/c++/13/iterator \
+ /usr/include/c++/13/bits/stream_iterator.h /usr/include/c++/13/optional \
  /usr/include/c++/13/bits/enable_special_members.h \
  /usr/include/c++/13/bitset /usr/include/c++/13/variant \
  /usr/include/c++/13/bits/parse_numbers.h
