@@ -89,6 +89,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/asm-generic/errno.h \
   /usr/include/assert.h \
   /usr/include/c++/13/array \
+  /usr/include/c++/13/atomic \
   /usr/include/c++/13/backward/auto_ptr.h \
   /usr/include/c++/13/backward/binders.h \
   /usr/include/c++/13/bit \
@@ -98,6 +99,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/bits/allocator.h \
   /usr/include/c++/13/bits/atomic_base.h \
   /usr/include/c++/13/bits/atomic_lockfree_defines.h \
+  /usr/include/c++/13/bits/atomic_timed_wait.h \
   /usr/include/c++/13/bits/atomic_wait.h \
   /usr/include/c++/13/bits/basic_ios.h \
   /usr/include/c++/13/bits/basic_ios.tcc \
@@ -105,6 +107,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/bits/basic_string.tcc \
   /usr/include/c++/13/bits/char_traits.h \
   /usr/include/c++/13/bits/charconv.h \
+  /usr/include/c++/13/bits/chrono.h \
   /usr/include/c++/13/bits/concept_check.h \
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
@@ -146,12 +149,14 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/bits/ranges_util.h \
   /usr/include/c++/13/bits/refwrap.h \
   /usr/include/c++/13/bits/requires_hosted.h \
+  /usr/include/c++/13/bits/semaphore_base.h \
   /usr/include/c++/13/bits/shared_ptr.h \
   /usr/include/c++/13/bits/shared_ptr_atomic.h \
   /usr/include/c++/13/bits/shared_ptr_base.h \
   /usr/include/c++/13/bits/specfun.h \
   /usr/include/c++/13/bits/std_abs.h \
   /usr/include/c++/13/bits/std_mutex.h \
+  /usr/include/c++/13/bits/std_thread.h \
   /usr/include/c++/13/bits/stl_algobase.h \
   /usr/include/c++/13/bits/stl_bvector.h \
   /usr/include/c++/13/bits/stl_construct.h \
@@ -171,6 +176,8 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/bits/streambuf_iterator.h \
   /usr/include/c++/13/bits/string_view.tcc \
   /usr/include/c++/13/bits/stringfwd.h \
+  /usr/include/c++/13/bits/this_thread_sleep.h \
+  /usr/include/c++/13/bits/unique_lock.h \
   /usr/include/c++/13/bits/unique_ptr.h \
   /usr/include/c++/13/bits/uses_allocator.h \
   /usr/include/c++/13/bits/uses_allocator_args.h \
@@ -189,6 +196,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/cstdint \
   /usr/include/c++/13/cstdio \
   /usr/include/c++/13/cstdlib \
+  /usr/include/c++/13/ctime \
   /usr/include/c++/13/cwchar \
   /usr/include/c++/13/cwctype \
   /usr/include/c++/13/debug/assertions.h \
@@ -211,6 +219,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/limits \
   /usr/include/c++/13/math.h \
   /usr/include/c++/13/memory \
+  /usr/include/c++/13/mutex \
   /usr/include/c++/13/new \
   /usr/include/c++/13/numbers \
   /usr/include/c++/13/optional \
@@ -219,12 +228,16 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/c++/13/pstl/glue_memory_defs.h \
   /usr/include/c++/13/pstl/pstl_config.h \
   /usr/include/c++/13/ranges \
+  /usr/include/c++/13/ratio \
+  /usr/include/c++/13/semaphore \
   /usr/include/c++/13/span \
   /usr/include/c++/13/stdexcept \
+  /usr/include/c++/13/stop_token \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
   /usr/include/c++/13/string_view \
   /usr/include/c++/13/system_error \
+  /usr/include/c++/13/thread \
   /usr/include/c++/13/tr1/bessel_function.tcc \
   /usr/include/c++/13/tr1/beta_function.tcc \
   /usr/include/c++/13/tr1/ell_integral.tcc \
@@ -256,6 +269,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
+  /usr/include/semaphore.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdint.h \
   /usr/include/stdio.h \
@@ -301,6 +315,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/semaphore.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
@@ -367,6 +382,7 @@ CMakeFiles/as9.dir/src/as9.cpp.o: /home/obob/cs381/as9/src/as9.cpp \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/syscall.h \
+  /usr/include/x86_64-linux-gnu/sys/time.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
@@ -697,6 +713,8 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
+/usr/include/x86_64-linux-gnu/sys/time.h:
+
 /usr/include/x86_64-linux-gnu/sys/single_threaded.h:
 
 /usr/include/x86_64-linux-gnu/sys/cdefs.h:
@@ -779,6 +797,8 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/stdint-least.h:
 
+/usr/include/x86_64-linux-gnu/bits/semaphore.h:
+
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/x86_64-linux-gnu/bits/select.h:
@@ -799,15 +819,25 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
 
-/usr/include/c++/13/bits/functexcept.h:
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
-/usr/include/c++/13/bits/stl_construct.h:
+/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
-/usr/include/c++/13/bits/std_mutex.h:
+/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
 
-/usr/include/c++/13/bits/stl_bvector.h:
+/usr/include/x86_64-linux-gnu/bits/floatn.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/environments.h:
 
 /usr/include/c++/13/bits/shared_ptr_atomic.h:
 
@@ -849,23 +879,25 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/bits/uses_allocator_args.h:
 
-/usr/include/c++/13/bits/max_size_type.h:
-
 /usr/include/c++/13/bits/locale_facets.tcc:
+
+/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
+
+/usr/include/c++/13/bits/requires_hosted.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
 /usr/include/c++/13/bits/locale_classes.h:
 
+/usr/include/c++/13/bits/this_thread_sleep.h:
+
 /usr/include/c++/13/bits/invoke.h:
 
 /home/obob/cs381/as9/generated/cubemap.fs:
 
-/usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h:
-
-/usr/include/x86_64-linux-gnu/bits/environments.h:
-
 /usr/include/c++/13/bits/functional_hash.h:
+
+/usr/include/c++/13/bits/functexcept.h:
 
 /usr/include/c++/13/bits/localefwd.h:
 
@@ -897,19 +929,13 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /home/obob/cs381/as9/raylib-cpp/include/Gamepad.hpp:
 
-/usr/include/c++/13/bits/streambuf.tcc:
-
-/usr/include/c++/13/bits/specfun.h:
-
-/usr/include/c++/13/bits/basic_string.h:
-
-/usr/include/c++/13/tr1/poly_laguerre.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/endianness.h:
-
 /usr/include/c++/13/bits/basic_ios.tcc:
 
 /usr/include/c++/13/pstl/execution_defs.h:
+
+/usr/include/c++/13/bits/atomic_timed_wait.h:
+
+/usr/include/c++/13/tr1/exp_integral.tcc:
 
 /usr/include/c++/13/bits/atomic_lockfree_defines.h:
 
@@ -921,6 +947,8 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/bits/locale_classes.tcc:
 
+/usr/include/c++/13/bits/stl_bvector.h:
+
 /usr/include/x86_64-linux-gnu/sys/syscall.h:
 
 /usr/include/c++/13/clocale:
@@ -931,9 +959,15 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/bits/unique_ptr.h:
 
+/usr/include/c++/13/semaphore:
+
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
 /usr/include/c++/13/bits/charconv.h:
+
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
+/usr/include/c++/13/bits/stl_pair.h:
 
 /usr/include/c++/13/cstdio:
 
@@ -975,8 +1009,6 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /home/obob/cs381/as9/raylib-cpp/include/VrStereoConfig.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
-
 /usr/include/c++/13/bits/stl_algobase.h:
 
 /home/obob/cs381/as9/raylib-cpp/include/Keyboard.hpp:
@@ -993,11 +1025,7 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/bits/ostream_insert.h:
 
-/usr/include/c++/13/math.h:
-
 /home/obob/cs381/as9/raylib-cpp/include/AutomationEventList.hpp:
-
-/usr/include/c++/13/bits/stl_deque.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
@@ -1009,15 +1037,11 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /home/obob/cs381/as9/raylib-cpp/include/TextureUnmanaged.hpp:
 
+/usr/include/c++/13/ctime:
+
 /usr/include/c++/13/deque:
 
 /home/obob/cs381/as9/raylib-cpp/include/AudioDevice.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
-/usr/include/c++/13/bits/utility.h:
-
-/usr/include/c++/13/tr1/beta_function.tcc:
 
 /usr/include/c++/13/bits/move.h:
 
@@ -1033,13 +1057,33 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /home/obob/cs381/as9/raylib-cpp/include/MeshUnmanaged.hpp:
 
+/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
+
+/home/obob/cs381/as9/raylib-cpp/include/Functions.hpp:
+
 /home/obob/cs381/as9/raylib-cpp/include/ModelAnimation.hpp:
+
+/usr/include/c++/13/bits/std_mutex.h:
+
+/usr/include/c++/13/bits/stl_construct.h:
 
 /usr/include/c++/13/bits/ranges_cmp.h:
 
 /home/obob/cs381/as9/raylib-cpp/include/Mouse.hpp:
 
+/home/obob/cs381/as9/raylib-cpp/include/AudioStream.hpp:
+
+/usr/include/assert.h:
+
 /home/obob/cs381/as9/raylib-cpp/include/Matrix.hpp:
+
+/usr/include/c++/13/bits/semaphore_base.h:
+
+/usr/include/c++/13/bits/cpp_type_traits.h:
+
+/usr/include/c++/13/cassert:
+
+/usr/include/c++/13/tr1/poly_hermite.tcc:
 
 /home/obob/cs381/as9/raylib-cpp/include/Vector3.hpp:
 
@@ -1113,25 +1157,19 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /home/obob/cs381/as9/raylib-cpp/include/RayCollision.hpp:
 
+/usr/include/c++/13/stop_token:
+
 /usr/include/c++/13/tr1/legendre_function.tcc:
 
 /home/obob/cs381/as9/raylib-cpp/include/Texture.hpp:
-
-/usr/include/c++/13/bits/stl_function.h:
-
-/home/obob/cs381/as9/raylib-cpp/include/Wave.hpp:
 
 /usr/include/c++/13/bits/basic_ios.h:
 
 /home/obob/cs381/as9/raylib-cpp/raylib/src/raymath.h:
 
-/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
-
 /usr/include/c++/13/bits/allocator.h:
 
 /home/obob/cs381/as9/raylib-cpp/include/raylib-cpp.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:
 
 /home/obob/cs381/as9/generated/cubemap.vs:
 
@@ -1145,8 +1183,6 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /home/obob/cs381/as9/src/skybox.hpp:
 
-/usr/include/linux/limits.h:
-
 /usr/include/endian.h:
 
 /usr/include/stdint.h:
@@ -1155,9 +1191,31 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/bits/hash_bytes.h:
 
-/home/obob/cs381/as9/raylib-cpp/include/AudioStream.hpp:
+/usr/include/c++/13/bits/streambuf.tcc:
 
-/usr/include/assert.h:
+/usr/include/c++/13/bits/specfun.h:
+
+/usr/include/c++/13/bits/basic_string.h:
+
+/usr/include/c++/13/tr1/poly_laguerre.tcc:
+
+/usr/include/c++/13/bits/chrono.h:
+
+/usr/include/x86_64-linux-gnu/bits/endianness.h:
+
+/usr/include/c++/13/atomic:
+
+/usr/include/c++/13/bits/stl_deque.h:
+
+/home/obob/cs381/as9/raylib-cpp/include/Wave.hpp:
+
+/usr/include/c++/13/bits/stl_function.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
+
+/usr/include/c++/13/bits/utility.h:
+
+/usr/include/c++/13/tr1/beta_function.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
@@ -1185,6 +1243,12 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/bits/stringfwd.h:
 
+/usr/include/c++/13/math.h:
+
+/usr/include/c++/13/bits/unique_lock.h:
+
+/usr/include/c++/13/mutex:
+
 /usr/include/c++/13/optional:
 
 /usr/include/c++/13/bits/vector.tcc:
@@ -1198,12 +1262,6 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 /usr/include/c++/13/tr1/hypergeometric.tcc:
 
 /usr/include/c++/13/type_traits:
-
-/usr/include/c++/13/bits/cpp_type_traits.h:
-
-/usr/include/c++/13/cassert:
-
-/usr/include/c++/13/tr1/poly_hermite.tcc:
 
 /usr/include/c++/13/cctype:
 
@@ -1229,8 +1287,6 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/memory:
 
-/usr/include/x86_64-linux-gnu/bits/floatn.h:
-
 /usr/include/c++/13/cstddef:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
@@ -1239,15 +1295,15 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/cwctype:
 
+/usr/include/linux/limits.h:
+
+/usr/include/c++/13/ratio:
+
 /usr/include/c++/13/debug/assertions.h:
 
 /usr/include/linux/errno.h:
 
 /usr/include/c++/13/debug/debug.h:
-
-/usr/include/c++/13/bits/stl_pair.h:
-
-/usr/include/x86_64-linux-gnu/bits/errno.h:
 
 /usr/include/c++/13/ext/aligned_buffer.h:
 
@@ -1265,15 +1321,19 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/ext/type_traits.h:
 
+/usr/include/c++/13/bits/std_thread.h:
+
+/usr/include/limits.h:
+
+/usr/include/c++/13/tr1/bessel_function.tcc:
+
+/usr/include/c++/13/initializer_list:
+
 /usr/include/c++/13/ios:
 
 /usr/include/c++/13/iostream:
 
 /usr/include/c++/13/istream:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/c++/13/bits/ios_base.h:
 
@@ -1301,23 +1361,19 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/c++/13/string:
 
-/home/obob/cs381/as9/raylib-cpp/include/raymath.hpp:
-
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
+
+/home/obob/cs381/as9/raylib-cpp/include/raymath.hpp:
 
 /usr/include/c++/13/string_view:
 
 /usr/include/features-time64.h:
 
+/usr/include/c++/13/bits/max_size_type.h:
+
+/usr/include/c++/13/thread:
+
 /usr/include/c++/13/tr1/ell_integral.tcc:
-
-/usr/include/c++/13/tr1/exp_integral.tcc:
-
-/usr/include/c++/13/tr1/bessel_function.tcc:
-
-/usr/include/c++/13/initializer_list:
-
-/usr/include/limits.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:
 
@@ -1345,6 +1401,8 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 
 /usr/include/sched.h:
 
+/usr/include/semaphore.h:
+
 /home/obob/cs381/as9/raylib-cpp/include/Vector2.hpp:
 
 /usr/include/c++/13/bits/stl_iterator_base_types.h:
@@ -1366,13 +1424,3 @@ CMakeFiles/as9.dir/src/skybox.cpp.o: /home/obob/cs381/as9/src/skybox.cpp \
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
-
-/usr/include/c++/13/bits/requires_hosted.h:
-
-/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
-
-/home/obob/cs381/as9/raylib-cpp/include/Functions.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
-/usr/include/x86_64-linux-gnu/bits/local_lim.h:
