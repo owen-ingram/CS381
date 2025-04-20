@@ -3,12 +3,20 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <thread>
+#include <mutex>
 #include "skybox.hpp"
 #include "ECS.hpp"
 
 constexpr int SCREEN_WIDTH = 800;
 constexpr int SCREEN_HEIGHT = 600;
 constexpr int MAX_ENTITIES = 100;
+
+std::string chatInput;
+std::vector<std::string> chatMessages;
+bool chatActive = false;
+const int maxChatMessages = 5;
+
 
 using EntityID = size_t;
 
@@ -51,6 +59,8 @@ std::vector<bool> hasVelocity(MAX_ENTITIES, false);
 std::vector<bool> hasPhysics2D(MAX_ENTITIES, false);
 std::vector<bool> selectionPool(MAX_ENTITIES, false);
 
+std::mutex entityMutex;
+
 raylib::Model carModel;
 raylib::Model goalModel;
 raylib::Texture skyTex;
@@ -71,7 +81,9 @@ EntityID CreateCar(Vector3 pos, float maxSpeed, float accel, float turnRate, ray
     velocityPool[e] = { {0, 0, 0}, 0.0f, 0.0f, maxSpeed, accel };
     physics2DPool[e] = { 0.0f, turnRate };
     hasTransform[e] = hasRender[e] = hasVelocity[e] = hasPhysics2D[e] = true;
+    entityMutex.lock();
     entityOrder.push_back(e);
+    entityMutex.unlock();
     return e;
 }
 
@@ -108,7 +120,6 @@ void RenderSystem() {
     for (EntityID e = 0; e < MAX_ENTITIES; ++e) {
         if (hasTransform[e] && hasRender[e]) {
             Matrix transform = MatrixIdentity();
-
             transform = MatrixMultiply(transform, MatrixScale(transformPool[e].scale.x, transformPool[e].scale.y, transformPool[e].scale.z));
 
             if (hasPhysics2D[e]) {
@@ -128,7 +139,6 @@ void RenderSystem() {
             if (selectionPool[e]) {
                 DrawBoundingBox(renderPool[e].model->GetBoundingBox(), RED);
             }
-
             if (e == goalEntity) {
                 DrawBoundingBox(renderPool[e].model->GetBoundingBox(), GREEN);
             }
@@ -191,21 +201,56 @@ void GoalSystem() {
     }
 }
 
+void ChatSystem() {
+    if (IsKeyPressed(KEY_ENTER)) {
+        if (chatActive && !chatInput.empty()) {
+            chatMessages.push_back(chatInput);
+            if (chatMessages.size() > maxChatMessages) {
+                chatMessages.erase(chatMessages.begin());
+            }
+            chatInput.clear();
+        }
+        chatActive = !chatActive;
+    }
+
+    if (chatActive) {
+        int key = GetCharPressed();
+        while (key > 0) {
+            if (key >= 32 && key <= 125) {
+                chatInput += static_cast<char>(key);
+            }
+            key = GetCharPressed();
+        }
+
+        if (IsKeyPressed(KEY_BACKSPACE) && !chatInput.empty()) {
+            chatInput.pop_back();
+        }
+    }
+}
+
 void DrawUI() {
     DrawText(TextFormat("Score: %d", score), 20, 20, 20, DARKGRAY);
+
+    int chatX = 20;
+    int chatY = SCREEN_HEIGHT - 150;
+    DrawRectangle(chatX - 10, chatY - 10, 400, 130, Fade(LIGHTGRAY, 0.5f));
+    DrawRectangleLines(chatX - 10, chatY - 10, 400, 130, DARKGRAY);
+
+    for (int i = 0; i < chatMessages.size(); ++i) {
+        DrawText(chatMessages[i].c_str(), chatX, chatY + i * 20, 20, BLACK);
+    }
+
+    if (chatActive) {
+        DrawText(("> " + chatInput).c_str(), chatX, chatY + chatMessages.size() * 20, 20, DARKBLUE);
+    }
 }
+
 
 int main() {
     raylib::Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Conenado");
     SetTargetFPS(60);
-    camera = raylib::Camera3D(
-        { 0.0f, 25.0f, 50.0f },  // Higher Y (up) and further Z (back)
-        { 0.0f, 0.0f, 0.0f },    // Still looking at origin
-        { 0.0f, 1.0f, 0.0f },    // Up direction
-        75.0f,                   // FOV
-        CAMERA_PERSPECTIVE
-    );
-    
+    camera = raylib::Camera3D({ 0.0f, 25.0f, 50.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 75.0f, CAMERA_PERSPECTIVE);
+
     carModel = raylib::Model("../assets/Kenny Car Kit/cone.glb");
     goalModel = raylib::Mesh::Sphere(1.0f, 16, 16).LoadModelFrom();
     goalModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = GREEN;
@@ -214,7 +259,6 @@ int main() {
 
     InitAudioDevice();
     Music ambientMusic = LoadMusicStream("../src/background_music.mp3");
-    PlayMusicStream(ambientMusic);
 
     raylib::Model grass = raylib::Mesh::Plane(100, 100, 1, 1).LoadModelFrom();
     raylib::Texture grassTexture = raylib::Texture("../assets/textures/grass.jpg");
@@ -222,34 +266,65 @@ int main() {
 
     EntityID car = CreateCar({ 0.0f, 0.0f, 0.0f }, 10.0f, 4.0f, 60.0f, carModel);
     selectionPool[car] = true;
-
     goalEntity = CreateGoal({ 0.0f, 1.0f, -10.0f }, goalModel);
     transformPool[goalEntity].scale = { 2.0f, 2.0f, 2.0f };
+
+    bool gameStarted = false;
 
     while (!window.ShouldClose()) {
         float dt = GetFrameTime();
 
-        SelectionSystem();
-        InputSystem(dt);
-        Physics2DSystem(dt);
-        KinematicsSystem(dt);
-        GoalSystem();
-
-        UpdateMusicStream(ambientMusic); // <<-- Add this line
-
         window.BeginDrawing();
         window.ClearBackground(RAYWHITE);
-        camera.BeginMode();
 
-        sky.Draw();
-        grass.Draw({});
-        RenderSystem();
+        if (!gameStarted) {
+            const char* startText = "START";
+            int btnWidth = 200;
+            int btnHeight = 60;
+            int btnX = SCREEN_WIDTH / 2 - btnWidth / 2;
+            int btnY = SCREEN_HEIGHT / 2 - btnHeight / 2;
+            Rectangle startButton = { (float)btnX, (float)btnY, (float)btnWidth, (float)btnHeight };
 
-        camera.EndMode();
-        DrawUI();
+            DrawText("Conenado", SCREEN_WIDTH/2 - MeasureText("Conenado", 50)/2, SCREEN_HEIGHT/2 - 150, 50, DARKGRAY);
+            DrawRectangleRec(startButton, LIGHTGRAY);
+            DrawRectangleLinesEx(startButton, 2, DARKGRAY);
+            DrawText(startText, btnX + btnWidth/2 - MeasureText(startText, 30)/2, btnY + btnHeight/2 - 15, 30, DARKGRAY);
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), startButton)) {
+                gameStarted = true;
+                PlayMusicStream(ambientMusic);
+            }
+        } else {
+            UpdateMusicStream(ambientMusic);
+
+            std::thread inputThread(InputSystem, dt);
+            std::thread selectionThread(SelectionSystem);
+            std::thread physicsThread(Physics2DSystem, dt);
+            std::thread kinematicsThread(KinematicsSystem, dt);
+            std::thread goalThread(GoalSystem);
+
+            inputThread.join();
+            selectionThread.join();
+            physicsThread.join();
+            kinematicsThread.join();
+            goalThread.join();
+
+            camera.BeginMode();
+
+            sky.Draw();
+            grass.Draw({});
+            RenderSystem();
+
+            camera.EndMode();
+            DrawUI();
+            ChatSystem();
+        }
+
         window.EndDrawing();
     }
+
     UnloadMusicStream(ambientMusic);
     CloseAudioDevice();
+
     return 0;
 }

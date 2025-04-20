@@ -2,6 +2,8 @@
 
 2. Inside the AS9 file run the command `rm -rf build`, then make a new build folder `mkdir build`, change into this build folder `cd build`, inside the build folder, run `cmake ..` and `make` to compile the libraries. To run the program, use the command, `./as9`. 
 
-3. W to increase speed, S to decrease speed. A/D to rotate. 
+3. W to increase speed, S to decrease speed. A/D to rotate. Enter to open chat.
 
 Conenado - A frustrating game with backwards controls, try to control the cone into the sphere(the goal), to score a point.
+
+Extra credit: Start game button, multithreading, chat box
